@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">UberClone</string>
+
+    //activity_main
+    <string name="hint_username">Enter username</string>
+    <string name="hint_password">Enter password</string>
+    <string name="hint_email">Enter email</string>
+    <string name="radio_btn_passenger">Passenger</string>
+    <string name="radio_btn_driver">Driver</string>
+    <string name="btn_sign_up">Sign up</string>
+    <string name="btn_log_in">Log in</string>
+    <string name="txt_no_registration">Don\'t want to sign up or log in?</string>
+    <string name="edt_driver_or_passenger">Are you a Driver or a Passenger?</string>
+    <string name="btn_one_time_login">One time log in</string>
+    <string name="logo_content_description">Photo by JESHOOTS.com from Pexels</string>
+
+</resources>
