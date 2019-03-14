@@ -13,5 +13,8 @@
     <string name="edt_driver_or_passenger">Are you a Driver or a Passenger?</string>
     <string name="btn_one_time_login">One time log in</string>
     <string name="logo_content_description">Photo by JESHOOTS.com from Pexels</string>
+    <string name="title_activity_passenger">Passenger</string>
+    <string name="btnRequest">Request a Car</string>
+    <string name="cancel_order">Cancel your uber order</string>
 
 </resources>

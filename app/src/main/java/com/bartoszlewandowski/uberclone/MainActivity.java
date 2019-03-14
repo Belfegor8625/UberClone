@@ -1,5 +1,6 @@
 package com.bartoszlewandowski.uberclone;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,11 +10,13 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.bartoszlewandowski.uberclone.passenger.PassengerActivity;
 import com.parse.LogInCallback;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
@@ -47,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ParseInstallation.getCurrentInstallation().saveInBackground();
+        if (ParseUser.getCurrentUser() != null) {
+            transitionToPassengerActivity();
+        }
         ButterKnife.bind(this);
         state = State.SIGNUP;
     }
@@ -108,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 if (e == null) {
                     FancyToast.makeText(MainActivity.this, "User signed up",
                             Toast.LENGTH_SHORT, FancyToast.SUCCESS, false).show();
+                    transitionToPassengerActivity();
                 }
             }
         });
@@ -131,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                         if (user != null && e == null) {
                             FancyToast.makeText(MainActivity.this, "User logged in",
                                     Toast.LENGTH_SHORT, FancyToast.SUCCESS, false).show();
+                            transitionToPassengerActivity();
                         }
                     }
                 });
@@ -148,14 +156,26 @@ public class MainActivity extends AppCompatActivity {
                             FancyToast.makeText(MainActivity.this, "Anonymous user",
                                     Toast.LENGTH_SHORT, FancyToast.SUCCESS, false).show();
                             user.put("as", edtDriverOrPassenger.getText().toString());
-                            user.saveInBackground();
+                            user.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    transitionToPassengerActivity();
+                                }
+                            });
                         }
                     }
                 });
             }
-        }else{
+        } else {
             FancyToast.makeText(MainActivity.this, getResources().getString(R.string.txt_no_registration),
                     Toast.LENGTH_SHORT, FancyToast.CONFUSING, false).show();
+        }
+    }
+
+    private void transitionToPassengerActivity() {
+        if (ParseUser.getCurrentUser().get("as").equals("Passenger")) {
+            Intent intent = new Intent(MainActivity.this, PassengerActivity.class);
+            startActivity(intent);
         }
     }
 
