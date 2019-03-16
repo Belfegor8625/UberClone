@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.LogOutCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -58,9 +59,9 @@ public class PassengerActivity extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
         ButterKnife.bind(this);
 
-        ParseQuery<ParseObject> carRequestQUery = ParseQuery.getQuery("RequestCar");
-        carRequestQUery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
-        carRequestQUery.findInBackground(new FindCallback<ParseObject>() {
+        ParseQuery<ParseObject> carRequestQuery = ParseQuery.getQuery("RequestCar");
+        carRequestQuery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+        carRequestQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
                 if (objects.size() > 0 && e == null) {
@@ -132,6 +133,17 @@ public class PassengerActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
     }
+
+    @OnClick(R.id.btnLogOutFromPassengerActivity)
+    public void onClickBtnLogOut(){
+        ParseUser.logOutInBackground(new LogOutCallback() {
+            @Override
+            public void done(ParseException e) {
+                finish();
+            }
+        });
+    }
+
 
     /**
      * Manipulates the map once available.

@@ -16,5 +16,9 @@
     <string name="title_activity_passenger">Passenger</string>
     <string name="btnRequest">Request a Car</string>
     <string name="cancel_order">Cancel your uber order</string>
+    <string name="logout">Logout</string>
+    <string name="txt_view_passenger_requests_here">View passenger requests here</string>
+    <string name="btn_update_list">Update the list</string>
+    <string name="get_nearby_requests">Get nearby requests</string>
 
 </resources>

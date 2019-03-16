@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.bartoszlewandowski.uberclone.driver.DriverRequestListActivity;
 import com.bartoszlewandowski.uberclone.passenger.PassengerActivity;
 import com.parse.LogInCallback;
 import com.parse.ParseAnonymousUtils;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         ParseInstallation.getCurrentInstallation().saveInBackground();
         if (ParseUser.getCurrentUser() != null) {
             transitionToPassengerActivity();
+            transitionToDriverRequestListActivity();
         }
         ButterKnife.bind(this);
         state = State.SIGNUP;
@@ -92,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private boolean checkIfUserChosenRadioBtn() {
         if (!radioBtnDriver.isChecked() && !radioBtnPassenger.isChecked()) {
             FancyToast.makeText(MainActivity.this, getResources().getString(R.string.txt_no_registration),
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     FancyToast.makeText(MainActivity.this, "User signed up",
                             Toast.LENGTH_SHORT, FancyToast.SUCCESS, false).show();
                     transitionToPassengerActivity();
+                    transitionToDriverRequestListActivity();
                 }
             }
         });
@@ -139,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                             FancyToast.makeText(MainActivity.this, "User logged in",
                                     Toast.LENGTH_SHORT, FancyToast.SUCCESS, false).show();
                             transitionToPassengerActivity();
+                            transitionToDriverRequestListActivity();
                         }
                     }
                 });
@@ -160,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void done(ParseException e) {
                                     transitionToPassengerActivity();
+                                    transitionToDriverRequestListActivity();
                                 }
                             });
                         }
@@ -173,10 +177,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void transitionToPassengerActivity() {
-        if (ParseUser.getCurrentUser().get("as").equals("Passenger")) {
-            Intent intent = new Intent(MainActivity.this, PassengerActivity.class);
-            startActivity(intent);
+        if (ParseUser.getCurrentUser() != null) {
+            if (ParseUser.getCurrentUser().get("as").equals("Passenger")) {
+                Intent intent = new Intent(MainActivity.this, PassengerActivity.class);
+                startActivity(intent);
+            }
         }
     }
 
+    private void transitionToDriverRequestListActivity() {
+        if (ParseUser.getCurrentUser() != null) {
+            if (ParseUser.getCurrentUser().get("as").equals("Driver")) {
+                Intent intent = new Intent(MainActivity.this, DriverRequestListActivity.class);
+                startActivity(intent);
+            }
+        }
+    }
 }
