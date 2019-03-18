@@ -20,5 +20,7 @@
     <string name="txt_view_passenger_requests_here">View passenger requests here</string>
     <string name="btn_update_list">Update the list</string>
     <string name="get_nearby_requests">Get nearby requests</string>
+    <string name="title_activity_view_locations_map">Map</string>
+    <string name="btn_ride">I want to give this passenger a ride</string>
 
 </resources>
