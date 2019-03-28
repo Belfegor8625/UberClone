@@ -85,12 +85,12 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnLogInOrSignUp)
     public void onClickBtnLogInOrSignUp() {
-        if (checkIfUserChosenRadioBtn()) {
-            if (state == State.SIGNUP) {
+        if (state == State.SIGNUP) {
+            if (checkIfUserChosenRadioBtn()) {
                 signUpNewUser();
-            } else if (state == State.LOGIN) {
-                logInUser();
             }
+        } else if (state == State.LOGIN) {
+            logInUser();
         }
     }
 

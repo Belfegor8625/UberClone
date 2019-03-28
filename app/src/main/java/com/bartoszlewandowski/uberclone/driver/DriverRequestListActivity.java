@@ -22,10 +22,6 @@ import android.widget.Toast;
 
 import com.bartoszlewandowski.uberclone.R;
 import com.bartoszlewandowski.uberclone.ViewLocationsMapActivity;
-import com.bartoszlewandowski.uberclone.passenger.PassengerActivity;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
@@ -33,6 +29,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.ArrayList;
@@ -66,11 +63,9 @@ public class DriverRequestListActivity extends AppCompatActivity implements Adap
         setUpAdapter();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         if (Build.VERSION.SDK_INT < 23 || ContextCompat.checkSelfPermission(DriverRequestListActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            setLocationListener();
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            initializeLocationListener();
         }
         requestsListView.setOnItemClickListener(this);
-
     }
 
     private void setUpArrayLists() {
@@ -86,7 +81,7 @@ public class DriverRequestListActivity extends AppCompatActivity implements Adap
         nearByDriveRequests.clear();
     }
 
-    private void setLocationListener() {
+    private void initializeLocationListener() {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -109,7 +104,6 @@ public class DriverRequestListActivity extends AppCompatActivity implements Adap
             }
         };
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -153,6 +147,7 @@ public class DriverRequestListActivity extends AppCompatActivity implements Adap
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(DriverRequestListActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                initializeLocationListener();
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                 Location currentDriverLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 updateRequestsListView(currentDriverLocation);
@@ -162,6 +157,7 @@ public class DriverRequestListActivity extends AppCompatActivity implements Adap
 
     private void updateRequestsListView(Location driverLocation) {
         if (driverLocation != null) {
+            saveDriverLocationToParse(driverLocation);
             final ParseGeoPoint driverCurrentLocation = new ParseGeoPoint(driverLocation.getLatitude(), driverLocation.getLongitude());
             ParseQuery<ParseObject> requestCarQuery = ParseQuery.getQuery("RequestCar");
             requestCarQuery.whereNear("passengerLocation", driverCurrentLocation);
@@ -193,6 +189,21 @@ public class DriverRequestListActivity extends AppCompatActivity implements Adap
         }
     }
 
+    private void saveDriverLocationToParse(Location location) {
+        ParseUser driver = ParseUser.getCurrentUser();
+        ParseGeoPoint driverLocation = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+        driver.put("driverLocation", driverLocation);
+        driver.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    FancyToast.makeText(DriverRequestListActivity.this, "Location saved",
+                            Toast.LENGTH_SHORT, FancyToast.SUCCESS, false).show();
+                }
+            }
+        });
+    }
+
     private void clearArrayLists() {
         if (nearByDriveRequests.size() > 0) {
             nearByDriveRequests.clear();
@@ -217,7 +228,7 @@ public class DriverRequestListActivity extends AppCompatActivity implements Adap
             intent.putExtra("dLongitude", currentDriverLocation.getLongitude());
             intent.putExtra("pLatitude", passengersLatitudes.get(position));
             intent.putExtra("pLongitude", passengersLongitudes.get(position));
-            intent.putExtra("rUsername",requestCarUsernames.get(position));
+            intent.putExtra("rUsername", requestCarUsernames.get(position));
             startActivity(intent);
         }
     }

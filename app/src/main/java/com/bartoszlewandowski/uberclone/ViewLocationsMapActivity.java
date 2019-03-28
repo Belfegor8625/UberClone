@@ -91,6 +91,7 @@ public class ViewLocationsMapActivity extends FragmentActivity implements OnMapR
             public void done(List<ParseObject> objects, ParseException e) {
                 if (objects.size() > 0 && e == null) {
                     for (ParseObject uberRequest : objects) {
+                        uberRequest.put("requestAccepted", true);
                         uberRequest.put("driverOfUser", ParseUser.getCurrentUser().getUsername());
                         uberRequest.saveInBackground(new SaveCallback() {
                             @Override
